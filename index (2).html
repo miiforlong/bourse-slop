@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020">
+<title>Portefeuille — suivi boursier</title>
+<style>
+:root{color-scheme:dark;--bg:#090e1b;--panel:#111a2d;--panel2:#16223a;--line:#263550;--muted:#93a4c0;--text:#eef4ff;--green:#43d9a3;--red:#ff7185;--blue:#82aaff;--gold:#f3c969}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 90% -10%,#1d3157 0%,transparent 65%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+.wrap{max-width:1180px;margin:auto;padding:30px 20px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}.brand{display:flex;align-items:center;gap:12px}.logo{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#5b8cff,#8b5cf6);display:grid;place-items:center;font-weight:900;font-size:21px}.eyebrow{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.14em}.title{font-size:25px;font-weight:800;letter-spacing:-.04em}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:17px}.card,.panel{background:linear-gradient(160deg,rgba(22,34,58,.96),rgba(15,23,40,.96));border:1px solid var(--line);border-radius:18px}.card{padding:17px}.card .label{color:var(--muted);font-size:12px}.big{font-size:25px;font-weight:800;letter-spacing:-.04em;margin-top:5px}.sub{font-size:12px;color:var(--muted);margin-top:3px}.positive{color:var(--green)!important}.negative{color:var(--red)!important}
+.panel{padding:20px;margin-top:15px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.panel h2{font-size:17px;margin:0}.muted{color:var(--muted)}.small{font-size:12px;color:var(--muted)}
+button,.btn{border:0;border-radius:11px;padding:10px 14px;background:#6d8fff;color:white;font-weight:700;cursor:pointer;font:inherit;font-size:13px}button:hover{filter:brightness(1.1)}button.secondary{background:var(--panel2);border:1px solid var(--line);color:var(--text)}button.danger{background:#492434;color:#ffb4c0}.actions{display:flex;gap:8px;flex-wrap:wrap}
+.formgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;color:var(--muted)}input,select{width:100%;background:#0b1324;border:1px solid var(--line);border-radius:10px;padding:11px;color:var(--text);font:inherit;min-width:0}input:focus,select:focus{outline:2px solid #6d8fff66;border-color:var(--blue)}.wide{grid-column:span 2}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:850px}th{text-align:left;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em;padding:11px 9px;border-bottom:1px solid var(--line)}td{padding:13px 9px;border-bottom:1px solid #24324a;font-size:13px}tr:last-child td{border-bottom:0}.company{font-weight:750}.ticker{font-size:11px;color:var(--muted)}.tag{display:inline-block;padding:4px 7px;border-radius:7px;background:#20314e;color:#b8caff;font-size:11px}
+.targetbox{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;align-items:end}.targetresult{background:#0b1426;border:1px solid var(--line);padding:14px;border-radius:13px}.targetresult strong{display:block;font-size:20px;margin-top:4px}.notice{background:#332b19;border:1px solid #66552b;color:#f5dfa0;padding:12px 14px;border-radius:12px;font-size:12px;margin-top:14px}
+.empty{text-align:center;padding:30px;color:var(--muted)}.footer{margin-top:18px;color:var(--muted);font-size:11px;text-align:center}.hidden{display:none!important}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.formgrid{grid-template-columns:repeat(2,1fr)}.targetbox{grid-template-columns:1fr 1fr}.targetbox .field:first-child{grid-column:span 2}}
+@media(max-width:520px){.wrap{padding:20px 12px 40px}.top{align-items:flex-start;flex-direction:column}.grid{gap:8px}.card{padding:13px}.big{font-size:21px}.formgrid{grid-template-columns:1fr 1fr}.wide{grid-column:span 2}.panel{padding:15px}.targetbox{grid-template-columns:1fr}.targetbox .field:first-child{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand"><div class="logo">↗</div><div><div class="eyebrow">Tableau de bord personnel</div><div class="title">Mon portefeuille</div></div></div>
+  <div class="pill">● Données enregistrées sur cet appareil</div>
+</header>
+
+<section class="grid">
+  <div class="card"><div class="label">Valeur actuelle</div><div class="big" id="totalValue">0,00 €</div><div class="sub">Valeur estimée de tes positions</div></div>
+  <div class="card"><div class="label">Investi (avec frais d'achat)</div><div class="big" id="totalCost">0,00 €</div><div class="sub">Coût de revient total</div></div>
+  <div class="card"><div class="label">Gain / perte estimé</div><div class="big" id="totalPL">0,00 €</div><div class="sub" id="totalPLPct">0,00 %</div></div>
+  <div class="card"><div class="label">Objectif du portefeuille</div><div class="big" id="goalValue">Non défini</div><div class="sub" id="goalProgress">Ajoute un objectif ci-dessous</div></div>
+</section>
+
+<section class="panel">
+  <div class="panelhead"><h2>Ajouter / modifier une position</h2><span class="small">Actions, ETF, crypto…</span></div>
+  <form id="holdingForm">
+    <input type="hidden" id="editId">
+    <div class="formgrid">
+      <div class="field wide"><label for="company">Entreprise / actif</label><input id="company" placeholder="Ex. NVIDIA" required></div>
+      <div class="field"><label for="ticker">Symbole</label><input id="ticker" placeholder="NVDA" required></div>
+      <div class="field"><label for="currency">Devise de cotation</label><select id="currency"><option value="USD">USD — Dollar</option><option value="EUR">EUR — Euro</option><option value="GBP">GBP — Livre</option><option value="CHF">CHF — Franc suisse</option></select></div>
+      <div class="field"><label for="quantity">Quantité détenue</label><input id="quantity" type="number" min="0" step="any" placeholder="0.01239019" required></div>
+      <div class="field"><label for="buyPrice">Prix d'achat unitaire</label><input id="buyPrice" type="number" min="0" step="any" placeholder="Ex. 180.50" required></div>
+      <div class="field"><label for="currentPrice">Prix actuel unitaire</label><input id="currentPrice" type="number" min="0" step="any" placeholder="Mets à jour le cours" required></div>
+      <div class="field"><label for="buyFee">Frais d'achat (devise de cotation)</label><input id="buyFee" type="number" min="0" step="any" value="0"></div>
+      <div class="field"><label for="sellFee">Frais de vente fixes</label><input id="sellFee" type="number" min="0" step="any" value="0"></div>
+      <div class="field"><label for="sellPercent">Frais de vente (%)</label><input id="sellPercent" type="number" min="0" max="100" step="any" value="0"></div>
+    </div>
+    <div class="actions" style="margin-top:15px"><button type="submit" id="saveBtn">Ajouter au portefeuille</button><button type="button" class="secondary hidden" id="cancelEdit">Annuler modification</button><button type="button" class="secondary" id="resetForm">Vider</button></div>
+  </form>
+</section>
+
+<section class="panel">
+  <div class="panelhead"><h2>Mes positions</h2><div class="actions"><button class="secondary" id="exportBtn">Exporter CSV</button><button class="secondary" id="sampleBtn">Charger mes 3 positions</button></div></div>
+  <div class="tablewrap">
+    <table><thead><tr><th>Actif</th><th>Quantité</th><th>Prix achat</th><th>Cours actuel</th><th>Valeur (EUR)</th><th>Gain / perte</th><th>Actions</th></tr></thead><tbody id="holdingsBody"></tbody></table>
+    <div id="emptyState" class="empty">Aucune position pour le moment. Ajoute ton premier actif ci-dessus.</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panelhead"><h2>Objectif de vente</h2><span class="tag">Calculateur</span></div>
+  <div class="targetbox">
+    <div class="field"><label for="goalAmount">Valeur totale visée</label><input id="goalAmount" type="number" min="0" step="any" placeholder="Ex. 11"></div>
+    <div class="field"><label for="goalCurrency">Devise de l'objectif</label><select id="goalCurrency"><option value="EUR">EUR — Euro</option><option value="USD">USD — Dollar</option></select></div>
+    <div class="field"><label for="eurUsd">Taux EUR → USD</label><input id="eurUsd" type="number" min="0.0001" step="any" value="1.08"></div>
+  </div>
+  <div class="small" style="margin-top:9px">Le taux de change est modifiable : indique le taux EUR/USD actuel si tu détiens des titres en plusieurs devises.</div>
+  <div class="grid" style="grid-template-columns:repeat(2,1fr);margin:15px 0 0">
+    <div class="targetresult"><span class="small">Valeur actuelle convertie</span><strong id="goalCurrent">—</strong></div>
+    <div class="targetresult"><span class="small">Écart jusqu'à l'objectif</span><strong id="goalGap">—</strong></div>
+  </div>
+  <div id="goalAdvice" class="notice">Renseigne un objectif pour calculer les seuils de vente.</div>
+  <div id="sellTargets" style="margin-top:14px"></div>
+</section>
+
+<section class="panel">
+  <div class="panelhead"><h2>Réglages et sauvegarde</h2></div>
+  <div class="actions"><button class="secondary" id="backupBtn">Télécharger une sauvegarde JSON</button><button class="secondary" id="importBtn">Importer une sauvegarde</button><button class="danger" id="clearBtn">Tout effacer</button><input class="hidden" type="file" id="importFile" accept=".json,application/json"></div>
+  <p class="small">Les données sont stockées localement dans ton navigateur (localStorage). Elles ne sont pas envoyées à un serveur. Pense à télécharger une sauvegarde si tu changes d'appareil ou de navigateur.</p>
+</section>
+<div class="footer">Outil de suivi personnel — les cours sont saisis manuellement, pas de flux boursier en direct. Les calculs sont indicatifs et ne constituent pas un conseil financier.</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const KEY='monPortefeuilleBourse_v1';
+let holdings=[];
+const fmt=(n,c='EUR')=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:c,maximumFractionDigits:2}).format(Number.isFinite(n)?n:0);
+const num=(id)=>Number($(id).value)||0;
+const rate=()=>Math.max(.000001,num('eurUsd'));
+function toEUR(value,currency){if(currency==='EUR')return value;if(currency==='USD')return value/rate();if(currency==='GBP')return value/0.85/rate()*1.08; if(currency==='CHF')return value/0.95;return value;}
+function fromEUR(value,currency){if(currency==='EUR')return value;if(currency==='USD')return value*rate();if(currency==='GBP')return value*0.85*rate()/1.08;if(currency==='CHF')return value*0.95;return value;}
+function moneyGoal(eur){return fmt($('goalCurrency').value==='EUR'?eur:eur*rate(),$('goalCurrency').value)}
+function save(){localStorage.setItem(KEY,JSON.stringify(holdings));render()}
+function resetForm(){ $('holdingForm').reset();$('editId').value='';$('buyFee').value=0;$('sellFee').value=0;$('sellPercent').value=0;$('saveBtn').textContent='Ajouter au portefeuille';$('cancelEdit').classList.add('hidden');}
+function calc(h){const valueNative=h.quantity*h.currentPrice;const costNative=h.quantity*h.buyPrice+h.buyFee;return {valueEUR:toEUR(valueNative,h.currency),costEUR:toEUR(costNative,h.currency),plEUR:toEUR(valueNative-costNative,h.currency),valueNative,costNative};}
+$('holdingForm').addEventListener('submit',e=>{e.preventDefault();const h={id:$('editId').value||crypto.randomUUID(),company:$('company').value.trim(),ticker:$('ticker').value.trim().toUpperCase(),currency:$('currency').value,quantity:num('quantity'),buyPrice:num('buyPrice'),currentPrice:num('currentPrice'),buyFee:num('buyFee'),sellFee:num('sellFee'),sellPercent:num('sellPercent')};if(!h.company||!h.ticker||h.quantity<=0||h.buyPrice<0||h.currentPrice<0||h.sellPercent<0||h.sellPercent>100){alert('Vérifie les champs : quantité positive et frais de vente entre 0 et 100 %.');return;}const i=holdings.findIndex(x=>x.id===h.id);if(i>=0)holdings[i]=h;else holdings.push(h);save();resetForm()});
+$('resetForm').onclick=resetForm;$('cancelEdit').onclick=resetForm;
+function edit(id){const h=holdings.find(x=>x.id===id);if(!h)return;for(const [k,v] of Object.entries(h)){const el=$(k==='id'?'editId':k);if(el)el.value=v;} $('saveBtn').textContent='Enregistrer les modifications';$('cancelEdit').classList.remove('hidden');$('holdingForm').scrollIntoView({behavior:'smooth',block:'center'});}
+function removeHolding(id){if(confirm('Supprimer cette position ?')){holdings=holdings.filter(h=>h.id!==id);save()}}
+function render(){const body=$('holdingsBody');body.innerHTML='';$('emptyState').classList.toggle('hidden',holdings.length>0);let total=0,cost=0;
+holdings.forEach(h=>{const c=calc(h);total+=c.valueEUR;cost+=c.costEUR;const tr=document.createElement('tr');const plClass=c.plEUR>=0?'positive':'negative';tr.innerHTML=`<td><div class="company">${esc(h.company)}</div><div class="ticker">${esc(h.ticker)} · ${h.currency}</div></td><td>${h.quantity.toLocaleString('fr-FR',{maximumFractionDigits:8})}</td><td>${fmt(h.buyPrice,h.currency)}</td><td><input aria-label="Cours actuel ${esc(h.ticker)}" data-price="${h.id}" type="number" min="0" step="any" value="${h.currentPrice}" style="width:120px;padding:7px"></td><td>${fmt(c.valueEUR)}</td><td class="${plClass}">${c.plEUR>=0?'+':''}${fmt(c.plEUR)} <span class="small">(${c.costEUR?((c.plEUR/c.costEUR)*100).toFixed(2):'0'} %)</span></td><td><div class="actions"><button class="secondary" data-edit="${h.id}">Modifier</button><button class="danger" data-delete="${h.id}">×</button></div></td>`;body.appendChild(tr)});
+$('totalValue').textContent=fmt(total);$('totalCost').textContent=fmt(cost);const pl=total-cost;$('totalPL').textContent=(pl>=0?'+':'')+fmt(pl);$('totalPL').className='big '+(pl>=0?'positive':'negative');$('totalPLPct').textContent=(cost?((pl/cost)*100).toFixed(2):'0.00')+' % de performance estimée';$('totalPLPct').className='sub '+(pl>=0?'positive':'negative');
+renderGoal(total);
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+$('holdingsBody').addEventListener('change',e=>{const id=e.target.dataset.price;if(!id)return;const h=holdings.find(x=>x.id===id);if(h){h.currentPrice=Math.max(0,Number(e.target.value)||0);save()}});
+$('holdingsBody').addEventListener('click',e=>{const editId=e.target.dataset.edit,delId=e.target.dataset.delete;if(editId)edit(editId);if(delId)removeHolding(delId)});
+function renderGoal(totalEUR){const goal=num('goalAmount'),cur=$('goalCurrency').value,goalEUR=cur==='EUR'?goal:goal/rate(),current=cur==='EUR'?totalEUR:totalEUR*rate();$('goalValue').textContent=goal>0?fmt(goal,cur):'Non défini';$('goalProgress').textContent=goal>0?(current>=goal?'Objectif atteint ou dépassé':((current/goal)*100).toFixed(1)+' % atteint'):'Ajoute un objectif ci-dessous';$('goalCurrent').textContent=goal>0?fmt(current,cur):'—';const gap=goal-current;$('goalGap').textContent=goal>0?(gap>0?fmt(gap,cur)+' à gagner':fmt(Math.abs(gap),cur)+' au-dessus'):'—';$('goalGap').className='';$('goalAdvice').textContent=goal>0?(gap<=0?'Ton portefeuille atteint déjà cet objectif en valeur estimée. Pense aux frais et à la fiscalité avant toute vente.':'Pour atteindre cet objectif, il manque '+fmt(gap,cur)+' de valeur estimée. Les seuils ci-dessous supposent que les autres positions restent à leur cours actuel.'):'Renseigne un objectif pour calculer les seuils de vente.';
+const out=$('sellTargets');out.innerHTML='';if(goal<=0||!holdings.length)return;
+const note=document.createElement('p');note.className='small';note.textContent='Prix indicatif auquel vendre toute une position pour que la valeur totale du portefeuille atteigne l’objectif, en supposant que les autres positions ne bougent pas. Les frais de vente saisis sont inclus.';out.appendChild(note);
+holdings.forEach(h=>{const c=calc(h),other=totalEUR-c.valueEUR;const remainingNative=fromEUR(Math.max(0,goalEUR-other),h.currency);const netRate=1-h.sellPercent/100;const neededNative=(remainingNative+h.sellFee)/Math.max(.000001,h.quantity*netRate);const currentNeeded=neededNative;const currentPrice=h.currentPrice;const box=document.createElement('div');box.className='targetresult';box.style.marginTop='9px';const achievable=goalEUR<=other;box.innerHTML=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><div><strong style="font-size:15px">${esc(h.company)} (${esc(h.ticker)})</strong><div class="small">Cours actuel : ${fmt(currentPrice,h.currency)}</div></div><div style="text-align:right"><span class="small">${achievable?'Objectif déjà couvert par les autres positions':'Prix de vente indicatif nécessaire'}</span><strong>${achievable?'Pas besoin de vendre':fmt(currentNeeded,h.currency)}</strong></div></div>${!achievable?`<div class="small">Soit ${currentPrice>0?((currentNeeded/currentPrice-1)*100).toFixed(2):'—'} % par rapport au cours saisi.</div>`:''}`;out.appendChild(box)});
+}
+['goalAmount','goalCurrency','eurUsd'].forEach(id=>$(id).addEventListener('input',()=>render()));
+$('sampleBtn').onclick=()=>{if(holdings.length&&!confirm('Remplacer les positions actuelles par tes trois positions NVIDIA, Microsoft et Take-Two ?'))return;holdings=[{id:crypto.randomUUID(),company:'Microsoft',ticker:'MSFT',currency:'USD',quantity:.00374413,buyPrice:0,currentPrice:0,buyFee:0,sellFee:0,sellPercent:0},{id:crypto.randomUUID(),company:'Take-Two Interactive',ticker:'TTWO',currency:'USD',quantity:.00863566,buyPrice:0,currentPrice:0,buyFee:0,sellFee:0,sellPercent:0},{id:crypto.randomUUID(),company:'NVIDIA',ticker:'NVDA',currency:'USD',quantity:.01239019,buyPrice:0,currentPrice:0,buyFee:0,sellFee:0,sellPercent:0}];save();alert('Positions ajoutées. Renseigne tes vrais prix d’achat et cours actuels en modifiant chaque ligne.');};
+$('exportBtn').onclick=()=>{const rows=[['Entreprise','Ticker','Devise','Quantité','Prix achat','Cours actuel','Frais achat','Frais vente fixe','Frais vente %'],...holdings.map(h=>[h.company,h.ticker,h.currency,h.quantity,h.buyPrice,h.currentPrice,h.buyFee,h.sellFee,h.sellPercent])];const csv=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\n');download('portefeuille.csv','text/csv;charset=utf-8',csv)};
+$('backupBtn').onclick=()=>download('sauvegarde-portefeuille.json','application/json',JSON.stringify({holdings,goalAmount:$('goalAmount').value,goalCurrency:$('goalCurrency').value,eurUsd:$('eurUsd').value},null,2));
+function download(name,type,content){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([content],{type}));a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+$('importBtn').onclick=()=>$('importFile').click();$('importFile').onchange=async e=>{try{const d=JSON.parse(await e.target.files[0].text());holdings=Array.isArray(d)?d:(d.holdings||[]);if(d.goalAmount!==undefined)$('goalAmount').value=d.goalAmount;if(d.goalCurrency)$('goalCurrency').value=d.goalCurrency;if(d.eurUsd)$('eurUsd').value=d.eurUsd;save();}catch{alert('Fichier de sauvegarde invalide.')}e.target.value=''};
+$('clearBtn').onclick=()=>{if(confirm('Effacer définitivement toutes les positions enregistrées dans ce navigateur ?')){holdings=[];save();resetForm()}};
+try{holdings=JSON.parse(localStorage.getItem(KEY)||'[]')}catch{holdings=[]}render();
+</script>
+</body>
+</html>
